@@ -6,6 +6,7 @@ import { formatNumber, levelColor, pickRandom, sumTimes } from '../lib/time'
 import type { CoopRun } from '../types'
 import { CoopRunForm } from './CoopRunForm'
 import { Portrait } from './Portrait'
+import { CharacterFace, ScratchCard } from './ScratchCard'
 import { Progress, SegmentedControl, StatCard } from './Stats'
 
 type CellMode = 'level' | 'score' | 'time'
@@ -23,6 +24,9 @@ export function CoopView({ store }: { store: RunStore<CoopRun> }) {
   const [form, setForm] = useState<Partial<CoopRun> | null>(null)
   const [suggestion, setSuggestion] = useState<{ thomas: string; craig: string } | null>(null)
   const [hover, setHover] = useState<{ t: string; c: string } | null>(null)
+  const [revealed, setRevealed] = useState({ thomas: false, craig: false })
+  const [rollId, setRollId] = useState(0)
+  const fullyRevealed = revealed.thomas && revealed.craig
 
   const byPair = useMemo(() => new Map(runs.map((r) => [key(r.thomas, r.craig), r])), [runs])
   const wins = useMemo(() => {
@@ -46,6 +50,8 @@ export function CoopView({ store }: { store: RunStore<CoopRun> }) {
       CHARACTERS.filter((c) => !byPair.has(key(t.id, c.id))).map((c) => ({ thomas: t.id, craig: c.id })),
     )
     setSuggestion(pickRandom(open))
+    setRevealed({ thomas: false, craig: false })
+    setRollId((n) => n + 1)
   }
 
   async function save(run: CoopRun, isNew: boolean) {
@@ -91,23 +97,41 @@ export function CoopView({ store }: { store: RunStore<CoopRun> }) {
             <p className="muted">Challenge complete!</p>
           ) : suggestion ? (
             <div className="suggestion">
-              <div className="suggestion-pair">
-                <div>
-                  <small className="thomas-text">{PLAYERS.thomas}</small>
-                  <Portrait id={suggestion.thomas} size={56} showName />
-                </div>
-                <span className="plus">+</span>
-                <div>
-                  <small className="craig-text">{PLAYERS.craig}</small>
-                  <Portrait id={suggestion.craig} size={56} showName />
-                </div>
+              <div className="scratch-row">
+                <ScratchCard
+                  key={`t${rollId}`}
+                  title={PLAYERS.thomas}
+                  accent="var(--thomas)"
+                  revealed={revealed.thomas}
+                  onReveal={() => setRevealed((r) => ({ ...r, thomas: true }))}
+                >
+                  <CharacterFace {...getCharacter(suggestion.thomas)} />
+                </ScratchCard>
+                <span className="scratch-vs">VS</span>
+                <ScratchCard
+                  key={`c${rollId}`}
+                  title={PLAYERS.craig}
+                  accent="var(--craig)"
+                  revealed={revealed.craig}
+                  locked={!revealed.thomas}
+                  lockedHint={`${PLAYERS.thomas} first`}
+                  onReveal={() => setRevealed((r) => ({ ...r, craig: true }))}
+                >
+                  <CharacterFace {...getCharacter(suggestion.craig)} />
+                </ScratchCard>
               </div>
-              <button className="btn" onClick={() => setForm({ ...suggestion })}>
-                Log this run
-              </button>
+              {fullyRevealed ? (
+                <button className="btn" onClick={() => setForm({ ...suggestion })}>
+                  Log this run
+                </button>
+              ) : (
+                <p className="muted scratch-hint">
+                  Scratch or tap {revealed.thomas ? `${PLAYERS.craig}'s` : `${PLAYERS.thomas}'s`} card to reveal
+                </p>
+              )}
             </div>
           ) : (
-            <p className="muted">Roll for an unplayed pairing. It's highlighted on the matrix.</p>
+            <p className="muted">Roll for an unplayed pairing, then scratch to reveal each character.</p>
           )}
         </div>
       </div>
@@ -169,7 +193,7 @@ export function CoopView({ store }: { store: RunStore<CoopRun> }) {
                 </th>
                 {CHARACTERS.map((c, ci) => {
                   const run = byPair.get(key(t.id, c.id))
-                  const isSuggested = suggestion?.thomas === t.id && suggestion?.craig === c.id
+                  const isSuggested = fullyRevealed && suggestion?.thomas === t.id && suggestion?.craig === c.id
                   const cls = [
                     'cell',
                     run ? 'played' : 'open',

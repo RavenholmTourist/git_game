@@ -207,3 +207,39 @@ main { padding: 1.5rem 2rem 3rem; max-width: 1900px; margin: 0 auto; }
   .run-form { grid-template-columns: 1fr; }
   .score-num { font-size: 3rem; }
 }
+
+/* Scratch cards */
+.suggestion { flex-direction: column; align-items: stretch; }
+.scratch-row { display: flex; align-items: center; justify-content: center; gap: 1.25rem; flex-wrap: wrap; }
+.scratch-slot { display: flex; flex-direction: column; align-items: center; gap: .35rem; }
+.scratch-title { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 1.5rem; letter-spacing: .06em; }
+.scratch-vs { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 2.4rem; color: var(--yellow); text-shadow: 2px 2px 0 var(--red); }
+.scratch-card {
+  position: relative; width: 150px; height: 190px; border-radius: 14px; overflow: hidden;
+  border: 3px solid var(--accent); background: radial-gradient(circle at 50% 35%, #2b2b3a, #101018 75%);
+  user-select: none; -webkit-user-select: none;
+}
+.scratch-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; padding: .5rem; text-align: center; }
+.scratch-portrait { width: 104px; height: 104px; border-radius: 10px; object-fit: cover; border: 2px solid var(--accent); }
+.scratch-name { font-family: 'Bebas Neue', Impact, sans-serif; font-size: 1.6rem; line-height: 1; }
+.chip.big { font-size: .95rem; padding: .35rem .8rem; }
+.scratch-cover { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.scratch-cover:focus-visible { outline: 3px solid var(--yellow); outline-offset: -3px; }
+.scratch-card:not(.locked):not(.revealed) { animation: wobble 2.4s ease-in-out infinite; }
+.scratch-card.locked .scratch-cover { filter: brightness(.45) saturate(.4); cursor: not-allowed; }
+.scratch-lock { position: absolute; left: 0; right: 0; bottom: 12px; text-align: center; font-size: .8rem; font-weight: 700; color: #ddd; pointer-events: none; }
+.scratch-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+.scratch-card.revealed { box-shadow: 0 0 28px var(--accent), 0 0 6px var(--accent); animation: slam .45s ease-out; }
+.scratch-card.revealed .scratch-cover { animation: cover-out .45s ease-in forwards; pointer-events: none; }
+.scratch-card.revealed .scratch-flash { animation: flash .6s ease-out; }
+.scratch-card.revealed .scratch-content { animation: pop .7s cubic-bezier(.2, 1.6, .4, 1); }
+.scratch-hint { text-align: center; margin: .25rem 0 0; }
+.suggestion > .btn { align-self: center; }
+@keyframes wobble { 0%, 100% { transform: rotate(0); } 47% { transform: rotate(0); } 50% { transform: rotate(-2deg); } 53% { transform: rotate(2deg); } 56% { transform: rotate(0); } }
+@keyframes cover-out { to { opacity: 0; transform: scale(1.35) rotate(6deg); filter: blur(4px); } }
+@keyframes flash { 0% { opacity: .95; } 100% { opacity: 0; } }
+@keyframes pop { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes slam { 0% { transform: scale(1); } 30% { transform: scale(1.08) rotate(-2deg); } 60% { transform: scale(.97) rotate(1deg); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .scratch-card, .scratch-card * { animation-duration: .01s !important; animation-iteration-count: 1 !important; }
+}

@@ -4,6 +4,7 @@ import type { RunStore } from '../lib/useRunStore'
 import { formatNumber, levelColor, pickRandom, sumTimes } from '../lib/time'
 import type { MoveVariant, SoloRun } from '../types'
 import { Portrait } from './Portrait'
+import { CharacterFace, ScratchCard } from './ScratchCard'
 import { SoloRunForm } from './SoloRunForm'
 import { Progress, StatCard } from './Stats'
 
@@ -32,6 +33,9 @@ export function SoloView({ store }: { store: RunStore<SoloRun> }) {
   const { runs, saving, mutate } = store
   const [form, setForm] = useState<Partial<SoloRun> | null>(null)
   const [suggestion, setSuggestion] = useState<({ character: string } & Combo) | null>(null)
+  const [revealed, setRevealed] = useState({ character: false, combo: false })
+  const [rollId, setRollId] = useState(0)
+  const fullyRevealed = revealed.character && revealed.combo
 
   const byKey = useMemo(() => new Map(runs.map((r) => [key(r.character, r), r])), [runs])
   const best = useMemo(() => [...runs].sort((a, b) => b.score - a.score).slice(0, 5), [runs])
@@ -39,6 +43,8 @@ export function SoloView({ store }: { store: RunStore<SoloRun> }) {
 
   function roll() {
     setSuggestion(pickRandom(VALID.filter((v) => !byKey.has(key(v.character, v)))))
+    setRevealed({ character: false, combo: false })
+    setRollId((n) => n + 1)
   }
 
   async function save(run: SoloRun, isNew: boolean) {
@@ -75,16 +81,38 @@ export function SoloView({ store }: { store: RunStore<SoloRun> }) {
             <p className="muted">Challenge complete!</p>
           ) : suggestion ? (
             <div className="suggestion">
-              <div className="suggestion-pair">
-                <Portrait id={suggestion.character} size={56} showName />
-                <div className="combo-chips">
-                  <span className={`chip ${suggestion.blitz}`}>{cap(suggestion.blitz)} Blitz</span>
-                  <span className={`chip ${suggestion.star}`}>{cap(suggestion.star)} Star</span>
-                </div>
+              <div className="scratch-row">
+                <ScratchCard
+                  key={`ch${rollId}`}
+                  title="Character"
+                  accent="var(--yellow)"
+                  revealed={revealed.character}
+                  onReveal={() => setRevealed((r) => ({ ...r, character: true }))}
+                >
+                  <CharacterFace {...getCharacter(suggestion.character)} />
+                </ScratchCard>
+                <ScratchCard
+                  key={`co${rollId}`}
+                  title="Moves"
+                  accent="var(--red)"
+                  revealed={revealed.combo}
+                  locked={!revealed.character}
+                  lockedHint="Character first"
+                  onReveal={() => setRevealed((r) => ({ ...r, combo: true }))}
+                >
+                  <span className={`chip big ${suggestion.blitz}`}>{cap(suggestion.blitz)} Blitz</span>
+                  <span className={`chip big ${suggestion.star}`}>{cap(suggestion.star)} Star</span>
+                </ScratchCard>
               </div>
-              <button className="btn" onClick={() => setForm({ ...suggestion })}>
-                Log this run
-              </button>
+              {fullyRevealed ? (
+                <button className="btn" onClick={() => setForm({ ...suggestion })}>
+                  Log this run
+                </button>
+              ) : (
+                <p className="muted scratch-hint">
+                  Scratch or tap the {revealed.character ? 'moves' : 'character'} card to reveal
+                </p>
+              )}
             </div>
           ) : (
             <p className="muted">Roll for an unplayed character + move combo.</p>
@@ -121,7 +149,7 @@ export function SoloView({ store }: { store: RunStore<SoloRun> }) {
                 {COMBOS.map((c) => {
                   const blocked = !ch.hasAltBlitz && c.blitz === 'alternate'
                   const run = byKey.get(key(ch.id, c))
-                  const isSuggested = suggestion && key(suggestion.character, suggestion) === key(ch.id, c)
+                  const isSuggested = fullyRevealed && suggestion && key(suggestion.character, suggestion) === key(ch.id, c)
                   if (blocked)
                     return (
                       <td key={key(ch.id, c)} className="cell blocked" title="SoR1 characters have no Alternate Blitz">
