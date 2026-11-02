@@ -1,7 +1,7 @@
 export function parseTime(input: string): number | null {
-  const parts = input.trim().split(':')
-  if (parts.length < 2 || parts.length > 3 || parts.some((p) => !/^\d+$/.test(p))) return null
-  const nums = parts.map(Number)
+  const trimmed = input.trim()
+  if (!/^(?:\d+:\d{2}|\d{1,2}):\d{2}$/.test(trimmed)) return null
+  const nums = trimmed.split(':').map(Number)
   const [h, m, s] = nums.length === 3 ? nums : [0, ...nums]
   if (m > 59 || s > 59) return null
   return h * 3600 + m * 60 + s
