@@ -1,0 +1,432 @@
+[
+  {
+    "id": "coop-1",
+    "loggedAt": "2026-06-24T21:51:52",
+    "thomas": "sor1-adam",
+    "craig": "sor4-estel",
+    "level": 13,
+    "time": "00:24:14",
+    "thomasScore": 16087,
+    "craigScore": 18033
+  },
+  {
+    "id": "coop-2",
+    "loggedAt": "2026-06-24T23:00:13",
+    "thomas": "sor4-axel",
+    "craig": "sor3-zan",
+    "level": 21,
+    "time": "00:45:19",
+    "thomasScore": 45063,
+    "craigScore": 38563
+  },
+  {
+    "id": "coop-3",
+    "loggedAt": "2026-06-27T22:03:02",
+    "thomas": "sor4-shiva",
+    "craig": "sor4-estel",
+    "level": 21,
+    "time": "00:41:03",
+    "thomasScore": 42335,
+    "craigScore": 48280
+  },
+  {
+    "id": "coop-4",
+    "loggedAt": "2026-06-28T00:24:45",
+    "thomas": "sor4-floyd",
+    "craig": "sor4-adam",
+    "level": 15,
+    "time": "00:26:17",
+    "thomasScore": 25986,
+    "craigScore": 30129
+  },
+  {
+    "id": "coop-5",
+    "loggedAt": "2026-07-04T21:36:08",
+    "thomas": "sor4-blaze",
+    "craig": "sor3-roo",
+    "level": 21,
+    "time": "00:44:25",
+    "thomasScore": 36672,
+    "craigScore": 43511
+  },
+  {
+    "id": "coop-6",
+    "loggedAt": "2026-07-04T22:06:04",
+    "thomas": "sor4-estel",
+    "craig": "sor3-zan",
+    "level": 14,
+    "time": "00:24:06",
+    "thomasScore": 28548,
+    "craigScore": 26011
+  },
+  {
+    "id": "coop-7",
+    "loggedAt": "2026-07-05T01:02:06",
+    "thomas": "sor3-skate",
+    "craig": "sor4-blaze",
+    "level": 25,
+    "time": "00:47:04",
+    "thomasScore": 53389,
+    "craigScore": 53562
+  },
+  {
+    "id": "coop-8",
+    "loggedAt": "2026-07-06T00:25:30",
+    "thomas": "sor3-axel",
+    "craig": "sor4-floyd",
+    "level": 33,
+    "time": "01:05:24",
+    "thomasScore": 120324,
+    "craigScore": 148160
+  },
+  {
+    "id": "coop-9",
+    "loggedAt": "2026-07-10T23:53:22",
+    "thomas": "sor1-adam",
+    "craig": "sor3-shiva",
+    "level": 26,
+    "time": "00:47:22",
+    "thomasScore": 58001,
+    "craigScore": 55189
+  },
+  {
+    "id": "coop-10",
+    "loggedAt": "2026-07-14T22:46:25",
+    "thomas": "sor1-blaze",
+    "craig": "sor2-axel",
+    "level": 21,
+    "time": "00:38:06",
+    "thomasScore": 54533,
+    "craigScore": 44752
+  },
+  {
+    "id": "coop-11",
+    "loggedAt": "2026-07-15T00:02:51",
+    "thomas": "sor4-max",
+    "craig": "sor4-blaze",
+    "level": 34,
+    "time": "01:08:44",
+    "thomasScore": 182084,
+    "craigScore": 114940
+  },
+  {
+    "id": "coop-12",
+    "loggedAt": "2026-07-24T23:40:55",
+    "thomas": "sor3-shiva",
+    "craig": "sor3-shiva",
+    "level": 21,
+    "time": "00:36:47",
+    "thomasScore": 52537,
+    "craigScore": 54387
+  },
+  {
+    "id": "coop-13",
+    "loggedAt": "2026-07-27T23:22:41",
+    "thomas": "sor1-blaze",
+    "craig": "sor3-zan",
+    "level": 25,
+    "time": "00:45:28",
+    "thomasScore": 55731,
+    "craigScore": 57842
+  },
+  {
+    "id": "coop-14",
+    "loggedAt": "2026-07-29T23:15:01",
+    "thomas": "sor3-zan",
+    "craig": "sor4-adam",
+    "level": 30,
+    "time": "01:07:50",
+    "thomasScore": 80275,
+    "craigScore": 81226
+  },
+  {
+    "id": "coop-15",
+    "loggedAt": "2026-07-30T00:20:37",
+    "thomas": "sor3-zan",
+    "craig": "sor2-max",
+    "level": 33,
+    "time": "00:59:53",
+    "thomasScore": 107925,
+    "craigScore": 93483
+  },
+  {
+    "id": "coop-16",
+    "loggedAt": "2026-08-13T22:45:30",
+    "thomas": "sor3-blaze",
+    "craig": "sor2-blaze",
+    "level": 21,
+    "time": "00:41:42",
+    "thomasScore": 69378,
+    "craigScore": 59321
+  },
+  {
+    "id": "coop-17",
+    "loggedAt": "2026-08-13T23:16:25",
+    "thomas": "sor4-shiva",
+    "craig": "sor2-skate",
+    "level": 13,
+    "time": "00:25:42",
+    "thomasScore": 15947,
+    "craigScore": 18537
+  },
+  {
+    "id": "coop-18",
+    "loggedAt": "2026-08-15T22:54:22",
+    "thomas": "sor1-axel",
+    "craig": "sor4-blaze",
+    "level": 33,
+    "time": "01:08:39",
+    "thomasScore": 101432,
+    "craigScore": 108040
+  },
+  {
+    "id": "coop-19",
+    "loggedAt": "2026-08-16T00:27:14",
+    "thomas": "sor2-axel",
+    "craig": "sor3-roo",
+    "level": 25,
+    "time": "00:46:30",
+    "thomasScore": 55736,
+    "craigScore": 64078
+  },
+  {
+    "id": "coop-20",
+    "loggedAt": "2026-08-16T23:22:18",
+    "thomas": "sor4-blaze",
+    "craig": "sor2-skate",
+    "level": 22,
+    "time": "00:39:32",
+    "thomasScore": 46421,
+    "craigScore": 44688
+  },
+  {
+    "id": "coop-21",
+    "loggedAt": "2026-08-23T00:30:56",
+    "thomas": "sor2-skate",
+    "craig": "sor4-shiva",
+    "level": 29,
+    "time": "00:55:14",
+    "thomasScore": 101609,
+    "craigScore": 84934
+  },
+  {
+    "id": "coop-22",
+    "loggedAt": "2026-09-05T22:48:50",
+    "thomas": "sor3-zan",
+    "craig": "sor2-skate",
+    "level": 21,
+    "time": "00:34:49",
+    "thomasScore": 42235,
+    "craigScore": 41270
+  },
+  {
+    "id": "coop-23",
+    "loggedAt": "2026-09-05T23:27:08",
+    "thomas": "sor4-floyd",
+    "craig": "sor3-zan",
+    "level": 16,
+    "time": "00:33:23",
+    "thomasScore": 33406,
+    "craigScore": 27965
+  },
+  {
+    "id": "coop-24",
+    "loggedAt": "2026-09-06T00:05:24",
+    "thomas": "sor3-blaze",
+    "craig": "sor3-skate",
+    "level": 17,
+    "time": "00:29:46",
+    "thomasScore": 25856,
+    "craigScore": 27345
+  },
+  {
+    "id": "coop-25",
+    "loggedAt": "2026-09-06T23:24:18",
+    "thomas": "sor4-shiva",
+    "craig": "sor3-skate",
+    "level": 21,
+    "time": "00:34:53",
+    "thomasScore": 34614,
+    "craigScore": 35112
+  },
+  {
+    "id": "coop-26",
+    "loggedAt": "2026-09-12T23:10:08",
+    "thomas": "sor2-skate",
+    "craig": "sor2-blaze",
+    "level": 14,
+    "time": "00:19:30",
+    "thomasScore": 20573,
+    "craigScore": 21691
+  },
+  {
+    "id": "coop-27",
+    "loggedAt": "2026-09-12T23:48:44",
+    "thomas": "sor2-skate",
+    "craig": "sor3-shiva",
+    "level": 21,
+    "time": "00:32:56",
+    "thomasScore": 41040,
+    "craigScore": 39998
+  },
+  {
+    "id": "coop-28",
+    "loggedAt": "2026-09-17T22:00:51",
+    "thomas": "sor1-axel",
+    "craig": "sor4-estel",
+    "level": 17,
+    "time": "00:28:23",
+    "thomasScore": 34582,
+    "craigScore": 32146
+  },
+  {
+    "id": "coop-29",
+    "loggedAt": "2026-09-17T22:37:17",
+    "thomas": "sor2-blaze",
+    "craig": "sor3-axel",
+    "level": 17,
+    "time": "00:30:08",
+    "thomasScore": 26341,
+    "craigScore": 30568
+  },
+  {
+    "id": "coop-30",
+    "loggedAt": "2026-09-17T23:25:50",
+    "thomas": "sor3-axel",
+    "craig": "sor3-skate",
+    "level": 17,
+    "time": "00:36:46",
+    "thomasScore": 29267,
+    "craigScore": 33970
+  },
+  {
+    "id": "coop-31",
+    "loggedAt": "2026-09-26T00:02:18",
+    "thomas": "sor2-axel",
+    "craig": "sor4-adam",
+    "level": 23,
+    "time": "00:42:07",
+    "thomasScore": 46829,
+    "craigScore": 44734
+  },
+  {
+    "id": "coop-32",
+    "loggedAt": "2026-09-27T00:00:27",
+    "thomas": "sor2-blaze",
+    "craig": "sor3-shiva",
+    "level": 33,
+    "time": "01:02:31",
+    "thomasScore": 164184,
+    "craigScore": 117993
+  },
+  {
+    "id": "coop-33",
+    "loggedAt": "2026-10-04T00:17:16",
+    "thomas": "sor4-estel",
+    "craig": "sor1-axel",
+    "level": 25,
+    "time": "00:51:39",
+    "thomasScore": 49628,
+    "craigScore": 64966
+  },
+  {
+    "id": "coop-34",
+    "loggedAt": "2026-10-08T00:06:49",
+    "thomas": "sor4-adam",
+    "craig": "sor2-max",
+    "level": 26,
+    "time": "00:41:01",
+    "thomasScore": 47480,
+    "craigScore": 50271
+  },
+  {
+    "id": "coop-35",
+    "loggedAt": "2026-10-10T23:52:06",
+    "thomas": "sor4-blaze",
+    "craig": "sor4-shiva",
+    "level": 27,
+    "time": "00:47:15",
+    "thomasScore": 65110,
+    "craigScore": 69533
+  },
+  {
+    "id": "coop-36",
+    "loggedAt": "2026-10-11T00:39:04",
+    "thomas": "sor2-max",
+    "craig": "sor4-axel",
+    "level": 23,
+    "time": "00:41:21",
+    "thomasScore": 62234,
+    "craigScore": 52423
+  },
+  {
+    "id": "coop-37",
+    "loggedAt": "2026-10-17T23:51:23",
+    "thomas": "sor3-skate",
+    "craig": "sor1-blaze",
+    "level": 25,
+    "time": "00:39:58",
+    "thomasScore": 61930,
+    "craigScore": 72250
+  },
+  {
+    "id": "coop-38",
+    "loggedAt": "2026-10-18T23:06:53",
+    "thomas": "sor2-axel",
+    "craig": "sor3-skate",
+    "level": 17,
+    "time": "00:24:48",
+    "thomasScore": 29715,
+    "craigScore": 29411
+  },
+  {
+    "id": "coop-39",
+    "loggedAt": "2026-10-18T23:57:05",
+    "thomas": "sor1-axel",
+    "craig": "sor3-blaze",
+    "level": 25,
+    "time": "00:46:47",
+    "thomasScore": 63809,
+    "craigScore": 51625
+  },
+  {
+    "id": "coop-40",
+    "loggedAt": "2026-10-26T00:28:29",
+    "thomas": "sor1-blaze",
+    "craig": "sor4-blaze",
+    "level": 33,
+    "time": "00:58:07",
+    "thomasScore": 111642,
+    "craigScore": 127116
+  },
+  {
+    "id": "coop-41",
+    "loggedAt": "2026-10-28T23:39:12",
+    "thomas": "sor2-blaze",
+    "craig": "sor4-axel",
+    "level": 24,
+    "time": "00:55:25",
+    "thomasScore": 69216,
+    "craigScore": 51014
+  },
+  {
+    "id": "coop-42",
+    "loggedAt": "2026-10-29T00:14:40",
+    "thomas": "sor3-skate",
+    "craig": "sor4-cherry",
+    "level": 19,
+    "time": "00:32:13",
+    "thomasScore": 42397,
+    "craigScore": 33069
+  },
+  {
+    "id": "coop-43",
+    "loggedAt": "2026-11-01T00:27:04",
+    "thomas": "sor2-max",
+    "craig": "sor4-max",
+    "level": 29,
+    "time": "00:48:21",
+    "thomasScore": 77264,
+    "craigScore": 95243
+  }
+]

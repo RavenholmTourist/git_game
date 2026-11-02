@@ -1,0 +1,32 @@
+[
+  {
+    "id": "solo-1",
+    "loggedAt": "2026-10-27T23:29:01",
+    "character": "sor2-max",
+    "blitz": "default",
+    "star": "default",
+    "level": 17,
+    "time": "00:24:13",
+    "score": 80973
+  },
+  {
+    "id": "solo-2",
+    "loggedAt": "2026-10-27T23:38:40",
+    "character": "sor3-blaze",
+    "blitz": "alternate",
+    "star": "alternate",
+    "level": 4,
+    "time": "00:04:56",
+    "score": 8904
+  },
+  {
+    "id": "solo-3",
+    "loggedAt": "2026-11-02T00:19:27",
+    "character": "sor3-roo",
+    "blitz": "default",
+    "star": "alternate",
+    "level": 9,
+    "time": "00:13:28",
+    "score": 31011
+  }
+]
