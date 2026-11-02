@@ -14,6 +14,11 @@ const CLEAR_THRESHOLD = 0.45
 const TAP_MAX_MOVE = 10
 const TAP_MAX_MS = 350
 
+function resolveColor(el: HTMLElement, color: string) {
+  const m = color.match(/^var\((--[\w-]+)\)$/)
+  return m ? getComputedStyle(el).getPropertyValue(m[1]).trim() || '#ffffff' : color
+}
+
 function paintCover(canvas: HTMLCanvasElement, accent: string) {
   const ctx = canvas.getContext('2d')
   if (!ctx) return
@@ -67,9 +72,10 @@ export function ScratchCard({ title, accent, revealed, locked, lockedHint, onRev
     const dpr = window.devicePixelRatio || 1
     canvas.width = Math.round(canvas.offsetWidth * dpr)
     canvas.height = Math.round(canvas.offsetHeight * dpr)
-    paintCover(canvas, accent)
+    const color = resolveColor(canvas, accent)
+    paintCover(canvas, color)
     document.fonts?.ready.then(() => {
-      if (!drag.current) paintCover(canvas, accent)
+      if (!drag.current) paintCover(canvas, color)
     })
   }, [accent])
 

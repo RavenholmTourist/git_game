@@ -3,7 +3,9 @@ import { CHARACTERS, getCharacter, isGameBoundary } from '../characters'
 import type { RunStore } from '../lib/useRunStore'
 import { formatNumber, levelColor, pickRandom, sumTimes } from '../lib/time'
 import type { MoveVariant, SoloRun } from '../types'
+import { MatrixFrame } from './MatrixFrame'
 import { Portrait } from './Portrait'
+import { SoloStats } from './SoloStats'
 import { CharacterFace, ScratchCard } from './ScratchCard'
 import { SoloRunForm } from './SoloRunForm'
 import { Progress, StatCard } from './Stats'
@@ -120,14 +122,16 @@ export function SoloView({ store }: { store: RunStore<SoloRun> }) {
         </div>
       </div>
 
-      <div className="matrix-toolbar">
+      <MatrixFrame
+        toolbar={
+          <>
         <h3>Character × Blitz / Star</h3>
         <button className="btn primary" onClick={() => setForm({})}>
           + Log run
         </button>
-      </div>
-
-      <div className="matrix-scroll">
+          </>
+        }
+      >
         <table className="matrix solo">
           <thead>
             <tr>
@@ -183,25 +187,9 @@ export function SoloView({ store }: { store: RunStore<SoloRun> }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </MatrixFrame>
 
-      {best.length > 0 && (
-        <div className="panels">
-          <div className="panel">
-            <h3>Top runs</h3>
-            <ol className="top-list">
-              {best.map((r) => (
-                <li key={r.id} onClick={() => setForm(r)}>
-                  <Portrait id={r.character} size={28} />
-                  <span className="grow">{runLabel(r)}</span>
-                  <span className="muted">Lvl {r.level}</span>
-                  <strong>{formatNumber(r.score)}</strong>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </div>
-      )}
+      <SoloStats runs={runs} onOpen={setForm} />
 
       {form && (
         <SoloRunForm
