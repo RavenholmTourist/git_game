@@ -28,5 +28,15 @@
     "level": 9,
     "time": "00:13:28",
     "score": 31011
+  },
+  {
+    "id": "4fea639c-3202-4054-9e87-1b8596ff40a9",
+    "loggedAt": "2026-11-02T22:23:56",
+    "character": "sor1-axel",
+    "blitz": "default",
+    "star": "default",
+    "level": 10,
+    "time": "00:12:34",
+    "score": 1000
   }
 ]
