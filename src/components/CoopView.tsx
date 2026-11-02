@@ -4,19 +4,16 @@ import { PLAYERS } from '../config'
 import type { RunStore } from '../lib/useRunStore'
 import { formatNumber, levelColor, pickRandom, sumTimes } from '../lib/time'
 import type { CoopRun } from '../types'
+import { pairKey, pairLabel, total, winner } from '../lib/coop'
+import { CoopStats } from './CoopStats'
+import { MatrixFrame } from './MatrixFrame'
 import { CoopRunForm } from './CoopRunForm'
 import { Portrait } from './Portrait'
 import { CharacterFace, ScratchCard } from './ScratchCard'
 import { Progress, SegmentedControl, StatCard } from './Stats'
 
 type CellMode = 'level' | 'score' | 'time'
-type Winner = 'thomas' | 'craig' | 'tie'
-
-const key = (t: string, c: string) => `${t}|${c}`
-const total = (r: CoopRun) => r.thomasScore + r.craigScore
-const winner = (r: CoopRun): Winner =>
-  r.thomasScore > r.craigScore ? 'thomas' : r.craigScore > r.thomasScore ? 'craig' : 'tie'
-const pairLabel = (t: string, c: string) => `${getCharacter(t).label} (T) + ${getCharacter(c).label} (C)`
+const key = pairKey
 
 export function CoopView({ store }: { store: RunStore<CoopRun> }) {
   const { runs, saving, mutate } = store
@@ -35,16 +32,6 @@ export function CoopView({ store }: { store: RunStore<CoopRun> }) {
     return w
   }, [runs])
   const best = useMemo(() => [...runs].sort((a, b) => total(b) - total(a)).slice(0, 5), [runs])
-  const leaderboard = useMemo(() => {
-    return CHARACTERS.map((c) => {
-      const played = runs.filter((r) => r.thomas === c.id || r.craig === c.id)
-      const avg = played.length ? played.reduce((a, r) => a + r.level, 0) / played.length : 0
-      return { c, played: played.length, avg }
-    })
-      .filter((x) => x.played > 0)
-      .sort((a, b) => b.avg - a.avg)
-  }, [runs])
-
   function roll() {
     const open = CHARACTERS.flatMap((t) =>
       CHARACTERS.filter((c) => !byPair.has(key(t.id, c.id))).map((c) => ({ thomas: t.id, craig: c.id })),
@@ -146,7 +133,9 @@ export function CoopView({ store }: { store: RunStore<CoopRun> }) {
         />
       </div>
 
-      <div className="matrix-toolbar">
+      <MatrixFrame
+        toolbar={
+          <>
         <h3>
           <span className="thomas-text">{PLAYERS.thomas}</span> ↓ vs <span className="craig-text">{PLAYERS.craig}</span> →
         </h3>
@@ -162,9 +151,9 @@ export function CoopView({ store }: { store: RunStore<CoopRun> }) {
         <button className="btn primary" onClick={() => setForm({})}>
           + Log run
         </button>
-      </div>
-
-      <div className="matrix-scroll">
+          </>
+        }
+      >
         <table className="matrix coop" data-mode={mode} onMouseLeave={() => setHover(null)}>
           <thead>
             <tr>
@@ -237,39 +226,9 @@ export function CoopView({ store }: { store: RunStore<CoopRun> }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </MatrixFrame>
 
-      <div className="panels">
-        <div className="panel">
-          <h3>Top runs (combined score)</h3>
-          <ol className="top-list">
-            {best.map((r) => (
-              <li key={r.id} onClick={() => setForm(r)}>
-                <Portrait id={r.thomas} size={28} />
-                <Portrait id={r.craig} size={28} />
-                <span className="grow">
-                  {getCharacter(r.thomas).label} + {getCharacter(r.craig).label}
-                </span>
-                <span className="muted">Lvl {r.level}</span>
-                <strong>{formatNumber(total(r))}</strong>
-              </li>
-            ))}
-          </ol>
-        </div>
-        <div className="panel">
-          <h3>Character average level</h3>
-          <ol className="top-list compact">
-            {leaderboard.slice(0, 10).map(({ c, played, avg }) => (
-              <li key={c.id}>
-                <Portrait id={c.id} size={24} />
-                <span className="grow">{c.label}</span>
-                <span className="muted">{played} runs</span>
-                <strong>{avg.toFixed(1)}</strong>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
+      <CoopStats runs={runs} onOpen={setForm} />
 
       {form && (
         <CoopRunForm
