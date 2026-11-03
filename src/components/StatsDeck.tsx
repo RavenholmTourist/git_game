@@ -78,7 +78,15 @@ export function StatsDeck({ panels }: { panels: StatPanel[] }) {
   )
 }
 
-export function CompareTable({ rows, left, right }: { rows: [string, ReactNode, ReactNode][]; left: ReactNode; right: ReactNode }) {
+export function CompareTable({
+  rows,
+  left,
+  right,
+}: {
+  rows: [string, ReactNode, ReactNode, ('thomas' | 'craig' | null)?][]
+  left: ReactNode
+  right: ReactNode
+}) {
   return (
     <table className="compare-table">
       <thead>
@@ -89,11 +97,11 @@ export function CompareTable({ rows, left, right }: { rows: [string, ReactNode, 
         </tr>
       </thead>
       <tbody>
-        {rows.map(([label, a, b]) => (
+        {rows.map(([label, a, b, lead]) => (
           <tr key={label}>
             <th>{label}</th>
-            <td>{a}</td>
-            <td>{b}</td>
+            <td className={lead === 'thomas' ? 'thomas-text' : undefined}>{a}</td>
+            <td className={lead === 'craig' ? 'craig-text' : undefined}>{b}</td>
           </tr>
         ))}
       </tbody>
