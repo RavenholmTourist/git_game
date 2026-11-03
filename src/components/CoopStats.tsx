@@ -1,26 +1,39 @@
-import { useMemo } from 'react'
-import { CHARACTERS, GAMES, getCharacter } from '../characters'
+import { useMemo, useState } from 'react'
+import { CHARACTERS, GAMES, getCharacter, type Game } from '../characters'
 import { PLAYERS } from '../config'
 import { total, winner, type Winner } from '../lib/coop'
 import { formatNumber, formatTime, levelColor, parseTime } from '../lib/time'
 import type { CoopRun } from '../types'
 import { Portrait } from './Portrait'
+import { SegmentedControl } from './Stats'
+import type { ReactNode } from 'react'
 import { CompareTable, StatsDeck, type StatPanel } from './StatsDeck'
 
 type Player = 'thomas' | 'craig'
-const PLAYER_KEYS: Player[] = ['thomas', 'craig']
 const secs = (r: CoopRun) => parseTime(r.time) ?? 0
 const avg = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0)
 const scoreOf = (r: CoopRun, p: Player) => (p === 'thomas' ? r.thomasScore : r.craigScore)
+const letter = (p: Player) => (p === 'thomas' ? 'T' : 'C')
 
-function PairRow({ r, onOpen, right }: { r: CoopRun; onOpen: (r: CoopRun) => void; right: React.ReactNode }) {
+function PortraitBadge({ id, p }: { id: string; p: Player }) {
+  return (
+    <span className="portrait-badge">
+      <Portrait id={id} size={30} />
+      <span className={`winner-dot ${p}`}>{letter(p)}</span>
+    </span>
+  )
+}
+
+// Winner on the left; dots show which player each portrait belongs to.
+function PairRow({ r, onOpen, right }: { r: CoopRun; onOpen: (r: CoopRun) => void; right: ReactNode }) {
+  const w = winner(r)
+  const first: Player = w === 'craig' ? 'craig' : 'thomas'
+  const second: Player = first === 'thomas' ? 'craig' : 'thomas'
   return (
     <li onClick={() => onOpen(r)}>
-      <Portrait id={r.thomas} size={28} />
-      <Portrait id={r.craig} size={28} />
-      <span className="grow">
-        {getCharacter(r.thomas).label} + {getCharacter(r.craig).label}
-      </span>
+      <PortraitBadge id={r[first]} p={first} />
+      <PortraitBadge id={r[second]} p={second} />
+      <span className="grow" />
       {right}
     </li>
   )
@@ -43,6 +56,7 @@ function streaks(runs: CoopRun[]) {
 }
 
 export function CoopStats({ runs, onOpen }: { runs: CoopRun[]; onOpen: (r: CoopRun) => void }) {
+  const [who, setWho] = useState<'all' | Player>('all')
   const panels = useMemo<StatPanel[]>(() => {
     if (!runs.length) return []
     const byTotal = [...runs].sort((a, b) => total(b) - total(a))
@@ -56,76 +70,54 @@ export function CoopStats({ runs, onOpen }: { runs: CoopRun[]; onOpen: (r: CoopR
       const won = runs.filter((r) => winner(r) === p)
       return {
         wins: won.length,
-        winPct: `${Math.round((won.length / runs.length) * 100)}%`,
-        avg: formatNumber(Math.round(avg(scores))),
-        best: formatNumber(Math.max(...scores)),
-        totalPts: formatNumber(scores.reduce((a, b) => a + b, 0)),
-        margin: won.length ? formatNumber(Math.round(avg(won.map((r) => Math.abs(r.thomasScore - r.craigScore))))) : '-',
+        winPct: (won.length / runs.length) * 100,
+        avg: avg(scores),
+        best: Math.max(...scores),
+        totalPts: scores.reduce((a, b) => a + b, 0),
+        margin: won.length ? avg(won.map((r) => Math.abs(r.thomasScore - r.craigScore))) : null,
         longest: longest[p],
       }
     }
     const t = playerStats('thomas')
     const c = playerStats('craig')
+    const h2h = (a: number, b: number): Player | null => (a > b ? 'thomas' : b > a ? 'craig' : null)
 
     const individual = runs
-      .flatMap((r) => PLAYER_KEYS.map((p) => ({ r, p, char: p === 'thomas' ? r.thomas : r.craig, score: scoreOf(r, p) })))
+      .flatMap((r) => (['thomas', 'craig'] as Player[]).map((p) => ({ r, p, char: p === 'thomas' ? r.thomas : r.craig, score: scoreOf(r, p) })))
       .sort((a, b) => b.score - a.score)
 
-    const charsFor = (p: Player) =>
+    const charStats = (p: 'all' | Player) =>
       CHARACTERS.map((ch) => {
-        const played = runs.filter((r) => (p === 'thomas' ? r.thomas : r.craig) === ch.id)
-        return { ch, n: played.length, avgScore: avg(played.map((r) => scoreOf(r, p))), wins: played.filter((r) => winner(r) === p).length }
+        const entries = runs.flatMap((r) => {
+          const out: { level: number; score: number }[] = []
+          if ((p === 'all' || p === 'thomas') && r.thomas === ch.id) out.push({ level: r.level, score: r.thomasScore })
+          if ((p === 'all' || p === 'craig') && r.craig === ch.id) out.push({ level: r.level, score: r.craigScore })
+          return out
+        })
+        return { ch, n: entries.length, avgLevel: avg(entries.map((e) => e.level)), avgScore: avg(entries.map((e) => e.score)) }
       })
         .filter((x) => x.n > 0)
-        .sort((a, b) => b.avgScore - a.avgScore)
+        .sort((a, b) => b.avgLevel - a.avgLevel)
 
-    const charLevels = CHARACTERS.map((ch) => {
-      const played = runs.filter((r) => r.thomas === ch.id || r.craig === ch.id)
-      return { ch, n: played.length, avgLevel: avg(played.map((r) => r.level)) }
-    })
-      .filter((x) => x.n > 0)
-      .sort((a, b) => b.avgLevel - a.avgLevel)
+    const gameGrid = (tg: Game, cg: Game) => {
+      const cell = runs.filter((r) => getCharacter(r.thomas).game === tg && getCharacter(r.craig).game === cg)
+      return { n: cell.length, avgLevel: avg(cell.map((r) => r.level)) }
+    }
 
-    const gameGrid = GAMES.map((tg) =>
-      GAMES.map((cg) => {
-        const cell = runs.filter((r) => getCharacter(r.thomas).game === tg && getCharacter(r.craig).game === cg)
-        return { n: cell.length, avgLevel: avg(cell.map((r) => r.level)) }
-      }),
+    const multiNames = [...new Set(CHARACTERS.map((ch) => ch.name))].filter(
+      (n) => CHARACTERS.filter((ch) => ch.name === n).length > 1,
     )
+    const latestOf = (name: string) => CHARACTERS.find((ch) => ch.name === name)!.id
+    const nameGrid = (tn: string, cn: string) => {
+      const cell = runs.filter((r) => getCharacter(r.thomas).name === tn && getCharacter(r.craig).name === cn)
+      return { n: cell.length, avgLevel: avg(cell.map((r) => r.level)) }
+    }
 
     const times = runs.map(secs)
     const longestRun = runs[times.indexOf(Math.max(...times))]
     const shortestRun = runs[times.indexOf(Math.min(...times))]
 
     const playerName = (p: Player) => <span className={`${p}-text`}>{PLAYERS[p]}</span>
-
-    const charColumn = (p: Player) => {
-      const list = charsFor(p)
-      return (
-        <div>
-          <h4>{playerName(p)} best</h4>
-          <ol className="top-list compact">
-            {list.slice(0, 4).map((x) => (
-              <li key={x.ch.id}>
-                <Portrait id={x.ch.id} size={24} />
-                <span className="grow">{x.ch.label}</span>
-                <strong>{formatNumber(Math.round(x.avgScore))}</strong>
-              </li>
-            ))}
-          </ol>
-          <h4>{playerName(p)} worst</h4>
-          <ol className="top-list compact">
-            {list.slice(-3).reverse().map((x) => (
-              <li key={x.ch.id}>
-                <Portrait id={x.ch.id} size={24} />
-                <span className="grow">{x.ch.label}</span>
-                <strong>{formatNumber(Math.round(x.avgScore))}</strong>
-              </li>
-            ))}
-          </ol>
-        </div>
-      )
-    }
 
     return [
       {
@@ -137,13 +129,18 @@ export function CoopStats({ runs, onOpen }: { runs: CoopRun[]; onOpen: (r: CoopR
               left={playerName('thomas')}
               right={playerName('craig')}
               rows={[
-                ['Wins', t.wins, c.wins],
-                ['Win rate', t.winPct, c.winPct],
-                ['Average score', t.avg, c.avg],
-                ['Best score', t.best, c.best],
-                ['Total points', t.totalPts, c.totalPts],
-                ['Avg winning margin', t.margin, c.margin],
-                ['Longest win streak', t.longest, c.longest],
+                ['Wins', t.wins, c.wins, h2h(t.wins, c.wins)],
+                ['Win rate', `${Math.round(t.winPct)}%`, `${Math.round(c.winPct)}%`, h2h(t.winPct, c.winPct)],
+                ['Average score', formatNumber(Math.round(t.avg)), formatNumber(Math.round(c.avg)), h2h(t.avg, c.avg)],
+                ['Best score', formatNumber(t.best), formatNumber(c.best), h2h(t.best, c.best)],
+                ['Total points', formatNumber(t.totalPts), formatNumber(c.totalPts), h2h(t.totalPts, c.totalPts)],
+                [
+                  'Avg winning margin',
+                  t.margin === null ? '-' : formatNumber(Math.round(t.margin)),
+                  c.margin === null ? '-' : formatNumber(Math.round(c.margin)),
+                  t.margin === null || c.margin === null ? null : h2h(t.margin, c.margin),
+                ],
+                ['Longest win streak', t.longest, c.longest, h2h(t.longest, c.longest)],
               ]}
             />
             {current.who !== 'tie' && (
@@ -183,7 +180,7 @@ export function CoopStats({ runs, onOpen }: { runs: CoopRun[]; onOpen: (r: CoopR
           <ol className="top-list">
             {individual.slice(0, 8).map(({ r, p, char, score }) => (
               <li key={`${r.id}-${p}`} onClick={() => onOpen(r)}>
-                <Portrait id={char} size={28} />
+                <PortraitBadge id={char} p={p} />
                 <span className="grow">
                   {playerName(p)} <span className="muted">as</span> {getCharacter(char).label}
                 </span>
@@ -196,40 +193,43 @@ export function CoopStats({ runs, onOpen }: { runs: CoopRun[]; onOpen: (r: CoopR
       },
       {
         id: 'chars',
-        label: 'Best characters',
+        label: 'Characters',
         render: () => (
           <>
-            <p className="deck-note">Average individual score with each character.</p>
-            <div className="two-col">
-              {charColumn('thomas')}
-              {charColumn('craig')}
-            </div>
-          </>
-        ),
-      },
-      {
-        id: 'levels',
-        label: 'Character levels',
-        render: () => (
-          <>
-            <p className="deck-note">Average level reached by runs including each character (either player).</p>
-            <div className="two-col">
-              {[charLevels.slice(0, 7), charLevels.slice(-7).reverse()].map((list, k) => (
-                <div key={k}>
-                  <h4>{k === 0 ? 'Strongest' : 'Weakest'}</h4>
-                  <ol className="top-list compact">
-                    {list.map((x) => (
-                      <li key={x.ch.id}>
-                        <Portrait id={x.ch.id} size={24} />
-                        <span className="grow">{x.ch.label}</span>
-                        <span className="muted">{x.n} {x.n === 1 ? 'run' : 'runs'}</span>
-                        <strong>{x.avgLevel.toFixed(1)}</strong>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              ))}
-            </div>
+            <SegmentedControl
+              value={who}
+              options={[
+                { value: 'all', label: 'Combined' },
+                { value: 'thomas', label: 'Thomas' },
+                { value: 'craig', label: 'Craig' },
+              ]}
+              onChange={setWho}
+            />
+            <p className="deck-note">
+              {who === 'all' ? 'Every run featuring each character, by either player.' : `Runs where ${PLAYERS[who]} played each character.`}
+            </p>
+            <table className="compare-table wide">
+              <thead>
+                <tr>
+                  <th />
+                  <th>Runs</th>
+                  <th>Avg level</th>
+                  <th>Avg score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {charStats(who).map((x) => (
+                  <tr key={x.ch.id}>
+                    <th>
+                      <Portrait id={x.ch.id} size={26} /> {x.ch.label}
+                    </th>
+                    <td>{x.n}</td>
+                    <td>{x.avgLevel.toFixed(1)}</td>
+                    <td>{formatNumber(Math.round(x.avgScore))}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </>
         ),
       },
@@ -279,23 +279,74 @@ export function CoopStats({ runs, onOpen }: { runs: CoopRun[]; onOpen: (r: CoopR
                 </tr>
               </thead>
               <tbody>
-                {GAMES.map((tg, ri) => (
+                {GAMES.map((tg) => (
                   <tr key={tg}>
                     <th>
                       <span className={`game-tag game-${tg.toLowerCase()}`}>{tg}</span>
                     </th>
-                    {gameGrid[ri].map((cell, ci) => (
-                      <td key={GAMES[ci]} style={cell.n ? { background: levelColor(cell.avgLevel) } : undefined}>
-                        {cell.n ? (
-                          <>
-                            <strong>{cell.avgLevel.toFixed(1)}</strong>
-                            <small>{cell.n} {cell.n === 1 ? 'run' : 'runs'}</small>
-                          </>
-                        ) : (
-                          <small className="muted">-</small>
-                        )}
-                      </td>
-                    ))}
+                    {GAMES.map((cg) => {
+                      const cell = gameGrid(tg, cg)
+                      return (
+                        <td key={cg} style={cell.n ? { background: levelColor(cell.avgLevel) } : undefined}>
+                          {cell.n ? (
+                            <>
+                              <strong>{cell.avgLevel.toFixed(1)}</strong>
+                              <small>{cell.n} {cell.n === 1 ? 'run' : 'runs'}</small>
+                            </>
+                          ) : (
+                            <small className="muted">-</small>
+                          )}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        ),
+      },
+      {
+        id: 'names',
+        label: 'Char vs char',
+        render: () => (
+          <>
+            <p className="deck-note">
+              Average level when {playerName('thomas')} (rows) faces {playerName('craig')} (columns), all versions of each
+              character combined.
+            </p>
+            <table className="game-grid">
+              <thead>
+                <tr>
+                  <th />
+                  {multiNames.map((n) => (
+                    <th key={n}>
+                      <Portrait id={latestOf(n)} size={34} />
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {multiNames.map((tn) => (
+                  <tr key={tn}>
+                    <th>
+                      <Portrait id={latestOf(tn)} size={34} />
+                    </th>
+                    {multiNames.map((cn) => {
+                      const cell = nameGrid(tn, cn)
+                      return (
+                        <td key={cn} style={cell.n ? { background: levelColor(cell.avgLevel) } : undefined}>
+                          {cell.n ? (
+                            <>
+                              <strong>{cell.avgLevel.toFixed(1)}</strong>
+                              <small>{cell.n} {cell.n === 1 ? 'run' : 'runs'}</small>
+                            </>
+                          ) : (
+                            <small className="muted">-</small>
+                          )}
+                        </td>
+                      )
+                    })}
                   </tr>
                 ))}
               </tbody>
@@ -340,7 +391,7 @@ export function CoopStats({ runs, onOpen }: { runs: CoopRun[]; onOpen: (r: CoopR
         ),
       },
     ]
-  }, [runs, onOpen])
+  }, [runs, onOpen, who])
 
   return <StatsDeck panels={panels} />
 }
